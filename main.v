@@ -30,7 +30,7 @@ fn main() {
 			u := i.str().f64() / (image_width-1)
 			v := j.str().f64() / (image_height-1)
 			r := Ray{origin, lower_left_corner.plus(horizontal.mul(u)).plus(vertical.mul(v).minus_vec(origin))}
-			pixel_color := r.color()
+			pixel_color := r.color(Sphere{Vec3{0,0,-1}, 0.5})
 
 			file.write_string('${pixel_color.to_color_line()}\n')!
 		}
