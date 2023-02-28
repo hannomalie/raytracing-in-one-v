@@ -25,14 +25,14 @@ fn (this Ray) color() Vec3 {
 }
 fn hit_sphere(center Vec3, radius f64, r Ray) f64 {
 	oc := r.point.minus_vec(center)
-	a := r.dir.dot(r.dir)
-	b := 2.0 * oc.dot(r.dir)
-	c := oc.dot(oc) - (radius * radius)
-	discriminant := (b * b) - (4 * a * c)
+	a := r.dir.length_squared()
+	half_b := oc.dot(r.dir)
+	c := oc.length_squared() - (radius * radius)
+	discriminant := (half_b * half_b) - (a * c)
 
 	if discriminant < 0 {
 		return -1.0
 	} else {
-		return (-b - math.sqrt(discriminant) ) / (2.0 * a)
+		return (-half_b - math.sqrt(discriminant) ) / a
 	}
 }
