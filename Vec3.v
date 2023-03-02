@@ -57,7 +57,22 @@ fn (this Vec3) unit_vector() Vec3 {
 	return this.div(this.length())
 }
 
-fn (this Vec3) to_color_line() string {
-	adjusted := this.mul(255.999)
-	return "${adjusted.x.str().int()} ${adjusted.y.str().int()} ${adjusted.z.str().int()}"
+fn (this Vec3) to_color(samples_per_pixel i8) Vec3 {
+	return if samples_per_pixel == 1 {
+		// Write the translated [0,255] value of each color component.
+		this.mul(255.999)
+	} else {
+		// Divide the color by the number of samples.
+		scale := 1.0 / f64(samples_per_pixel)
+		r_scaled := this.x * scale
+		g_scaled := this.y * scale
+		b_scaled := this.z * scale
+
+		// Write the translated [0,255] value of each color component.
+		Vec3{
+			clamp(r_scaled, 0.0, 0.999),
+			clamp(g_scaled, 0.0, 0.999),
+			clamp(b_scaled, 0.0, 0.999)
+		}.mul(255.999)
+	}
 }
