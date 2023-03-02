@@ -8,6 +8,12 @@ fn main() {
 	image_width := 400
 	image_height := (image_width / aspect_ratio).str().int()
 
+	// World
+	world := [
+		Hittable(Sphere{Vec3{0,0,-1}, 0.5}),
+		Sphere{Vec3{0,-100.5,-1}, 100}
+	]
+
 	// Camera
 	viewport_height := 2.0
 	viewport_width := aspect_ratio * viewport_height
@@ -30,7 +36,7 @@ fn main() {
 			u := i.str().f64() / (image_width-1)
 			v := j.str().f64() / (image_height-1)
 			r := Ray{origin, lower_left_corner.plus(horizontal.mul(u)).plus(vertical.mul(v).minus_vec(origin))}
-			pixel_color := r.color(Sphere{Vec3{0,0,-1}, 0.5})
+			pixel_color := world.color(r)
 
 			file.write_string('${pixel_color.to_color_line()}\n')!
 		}

@@ -49,3 +49,14 @@ fn (this []Hittable) hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool {
 
 	return hit_anything
 }
+
+fn (this []Hittable) color(r Ray) Vec3 {
+	mut rec := HitRecord{}
+	return if this.hit(r, 0, math.inf(1), mut &rec) {
+		rec.normal.plus(Vec3{1,1,1}).mul(0.5)
+	} else {
+		unit_direction := r.dir.unit_vector()
+		t := 0.5 * (unit_direction.y + 1.0)
+		Vec3{1.0, 1.0, 1.0}.mul(1.0-t).plus(Vec3{0.5, 0.7, 1.0}.mul(t))
+	}
+}
