@@ -28,6 +28,7 @@ struct HitRecord {
 		normal Vec3
 		t f64
 		front_face bool
+		material Material
 }
 fn (mut this HitRecord) set_face_normal(r Ray, outward_normal Vec3) {
 	this.front_face = r.dir.dot(outward_normal) < 0

@@ -10,10 +10,18 @@ fn main() {
 	samples_per_pixel := i8(20)
 	max_depth := 50
 
+	material_ground := LambertianMaterial{Vec3{0.8, 0.8, 0.0}}
+	material_center := LambertianMaterial{Vec3{0.7, 0.3, 0.3}}
+	material_left   := Metal{Vec3{0.8, 0.8, 0.8}}
+	material_right  := Metal{Vec3{0.8, 0.6, 0.2}}
 	// World
 	world := [
-		Hittable(Sphere{Vec3{0,0,-1}, 0.5}),
-		Sphere{Vec3{0,-100.5,-1}, 100}
+		Hittable(
+			Sphere{Vec3{0,-100.5,-1}, 100, material_ground}
+		),
+		Sphere{Vec3{0,0,-1}, 0.5, material_center},
+		Sphere{Vec3{-1,0,-1}, 0.5, material_left},
+		Sphere{Vec3{1,0,-1}, 0.5, material_right}
 	]
 
 	// Camera

@@ -5,6 +5,7 @@ import math
 struct Sphere {
 	center Vec3
 	radius f64 = 1
+	material Material
 }
 fn (this Sphere) hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool {
 	oc := r.point.minus_vec(this.center)
@@ -30,36 +31,40 @@ fn (this Sphere) hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool {
 	rec.p = r.at(rec.t)
 	outward_normal := rec.p.minus_vec(this.center).div(this.radius)
 	rec.set_face_normal(r, outward_normal)
+	rec.material = this.material
 
 	return true
 }
 
-fn (this []Hittable) hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool {
+fn (this []Hittable) hit(r Ray, t_min f64, t_max f64) (bool, HitRecord) {
 	mut temp_rec := HitRecord{}
 	mut hit_anything := false
 	mut closest_so_far := t_max
+	mut result_record := temp_rec
 
 	for object in this {
-		if object.hit(r, t_min, closest_so_far, mut temp_rec) {
+		if object.hit(r, t_min, closest_so_far, mut &temp_rec) {
 			hit_anything = true
 			closest_so_far = temp_rec.t
-			rec = temp_rec
+			result_record = temp_rec
 		}
 	}
 
-	return hit_anything
+	return hit_anything, result_record
 }
 
 fn (this []Hittable) color(r Ray, depth i32) Vec3 {
 	// If we've exceeded the ray bounce limit, no more light is gathered.
 	if depth <= 0 { return Vec3{} }
 
-	mut rec := HitRecord{}
-	return if this.hit(r, 0, math.inf(1), mut &rec) {
-		// rec.normal.plus(Vec3{1,1,1}).mul(0.5)
-		// target := rec.p.plus(rec.normal).plus(random_unit_vector())
-		target := rec.p.plus(random_in_hemisphere(rec.normal))
-		this.color(Ray{rec.p, target.minus_vec(rec.p)}, depth - 1).mul(0.5)
+	mut hit, rec := this.hit(r, 0, math.inf(1))
+	return if hit {
+		scatter_result := rec.material.scatter(r, rec)
+		if scatter_result.foo {
+			this.color(scatter_result.scattered, depth - 1).mul_vec(scatter_result.attenuation)
+		} else {
+			Vec3{}
+		}
 	} else {
 		unit_direction := r.dir.unit_vector()
 		t := 0.5 * (unit_direction.y + 1.0)

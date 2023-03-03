@@ -28,6 +28,9 @@ fn (this Vec3) plus(v Vec3) Vec3 {
 fn (this Vec3) mul(v f64) Vec3 {
 	return Vec3{ x: this.x * v, y: this.y * v, z: this.z * v}
 }
+fn (this Vec3) mul_vec(v Vec3) Vec3 {
+	return Vec3{ x: this.x * v.x, y: this.y * v.y, z: this.z * v.z}
+}
 fn (this Vec3) div(v f64) Vec3 {
 	return Vec3{ x: this.x / v, y: this.y / v, z: this.z / v}
 }
@@ -55,6 +58,9 @@ fn (this Vec3) cross(v Vec3) Vec3 {
 }
 fn (this Vec3) unit_vector() Vec3 {
 	return this.div(this.length())
+}
+fn (this Vec3) reflect(n &Vec3) Vec3 {
+	return this.minus_vec(n.mul(2 * this.dot(n)))
 }
 
 fn (this Vec3) to_color(samples_per_pixel i8) Vec3 {
@@ -112,4 +118,8 @@ fn random_in_hemisphere(normal Vec3) Vec3 {
 	} else {
 		in_unit_sphere.negate()
 	}
+}
+fn (this Vec3) near_zero() bool {
+	s := 1e-8
+	return (math.abs(this.x) < s) && (math.abs(this.y) < s) && (math.abs(this.z) < s)
 }
