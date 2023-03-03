@@ -50,10 +50,16 @@ fn (this []Hittable) hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool {
 	return hit_anything
 }
 
-fn (this []Hittable) color(r Ray) Vec3 {
+fn (this []Hittable) color(r Ray, depth i32) Vec3 {
+	// If we've exceeded the ray bounce limit, no more light is gathered.
+	if depth <= 0 { return Vec3{} }
+
 	mut rec := HitRecord{}
 	return if this.hit(r, 0, math.inf(1), mut &rec) {
-		rec.normal.plus(Vec3{1,1,1}).mul(0.5)
+		// rec.normal.plus(Vec3{1,1,1}).mul(0.5)
+		// target := rec.p.plus(rec.normal).plus(random_unit_vector())
+		target := rec.p.plus(random_in_hemisphere(rec.normal))
+		this.color(Ray{rec.p, target.minus_vec(rec.p)}, depth - 1).mul(0.5)
 	} else {
 		unit_direction := r.dir.unit_vector()
 		t := 0.5 * (unit_direction.y + 1.0)

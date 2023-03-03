@@ -31,7 +31,7 @@ struct HitRecord {
 }
 fn (mut this HitRecord) set_face_normal(r Ray, outward_normal Vec3) {
 	this.front_face = r.dir.dot(outward_normal) < 0
-	this.normal = if this.front_face { outward_normal } else { outward_normal.minus() }
+	this.normal = if this.front_face { outward_normal } else { outward_normal.negate() }
 }
 interface Hittable {
 	hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool

@@ -8,6 +8,7 @@ fn main() {
 	image_width := 400
 	image_height := (image_width / aspect_ratio).str().int()
 	samples_per_pixel := i8(20)
+	max_depth := 50
 
 	// World
 	world := [
@@ -32,7 +33,7 @@ fn main() {
 				u := (i + f64(0.5)) / (image_width-1)
 				v := (j + f64(0.5)) / (image_height-1)
 				r := cam.get_ray(u, v)
-				pixel_color := world.color(r)
+				pixel_color := world.color(r, max_depth)
 				pixel_color.to_color(1)
 			} else {
 				mut pixel_color := Vec3{0, 0, 0}
@@ -41,7 +42,7 @@ fn main() {
 					u := (i + random_double()) / (image_width-1)
 					v := (j + random_double()) / (image_height-1)
 					r := cam.get_ray(u, v)
-					pixel_color = pixel_color.plus(world.color(r))
+					pixel_color = pixel_color.plus(world.color(r, max_depth))
 				}
 
 				pixel_color.to_color(samples_per_pixel)
