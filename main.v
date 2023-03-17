@@ -7,7 +7,7 @@ fn main() {
 	aspect_ratio := 16.0 / 9.0
 	image_width := 400
 	image_height := (image_width / aspect_ratio).str().int()
-	samples_per_pixel := i8(20)
+	samples_per_pixel := i8(10)
 	max_depth := 50
 
 	material_ground := LambertianMaterial{Vec3{0.8, 0.8, 0.0}}
@@ -20,8 +20,12 @@ fn main() {
 			Sphere{Vec3{0,-100.5,-1}, 100, material_ground}
 		),
 		Sphere{Vec3{0,0,-1}, 0.5, material_center},
-		Sphere{Vec3{-1,0,-1}, 0.5, material_left},
-		Sphere{Vec3{1,0,-1}, 0.5, material_right}
+		// Sphere{Vec3{-1,0,-1}, 0.5, material_left},
+		// Sphere{Vec3{1,0,-1}, 0.5, material_right},
+		// Hittable(
+		// 	Triangle{Vec3{-1,0,-1}, Vec3{1,0,-1}, Vec3{0,1,-1}, material_center}
+		// ),
+		Triangle{Vec3{-2,-2,1}, Vec3{-1,-2,-2}, Vec3{-1, 1,-2}, material_ground},
 	]
 
 	// Camera

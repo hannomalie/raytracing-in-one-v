@@ -13,6 +13,9 @@ fn (this Vec3) negate() Vec3 {
 fn (this Vec3) minus_vec(v Vec3) Vec3 {
 	return Vec3{ x: this.x - v.x, y: this.y - v.y, z: this.z -  v.z}
 }
+fn (this Vec3) -(v Vec3) Vec3 {
+	return this.minus_vec(v)
+}
 fn (this Vec3) get(index int) f64 {
 	return match index {
 		1 { this.x }
@@ -24,6 +27,9 @@ fn (this Vec3) get(index int) f64 {
 
 fn (this Vec3) plus(v Vec3) Vec3 {
 	return Vec3{ x: this.x + v.x, y: this.y + v.y, z: this.z + v.z}
+}
+fn (this Vec3) +(v Vec3) Vec3 {
+	return this.plus(v)
 }
 fn (this Vec3) mul(v f64) Vec3 {
 	return Vec3{ x: this.x * v, y: this.y * v, z: this.z * v}

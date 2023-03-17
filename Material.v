@@ -1,7 +1,5 @@
 module main
 
-import arrays
-
 interface Material {
 	scatter(r_in &Ray, rec &HitRecord) ScatterResult
 }
