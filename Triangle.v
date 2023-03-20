@@ -9,7 +9,7 @@ struct Triangle {
 	material Material
 }
 
-fn (this Triangle) hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool {
+fn (this Triangle) hit(r Ray, t_min f64, t_max f64) ?&HitRecord {
 
 	v0 := this.a
 	v1 := this.b
@@ -27,7 +27,7 @@ fn (this Triangle) hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool {
 	// check if the ray and plane are parallel.
 	n_dot_ray_direction := normal.dot(r.dir)
 	// they are parallel, so they don't intersect!
-	if math.abs(n_dot_ray_direction) < math.epsilon { return false }
+	if math.abs(n_dot_ray_direction) < math.epsilon { return none }
 
 	// compute d parameter using equation 2
 	d := normal.negate().dot(v0)
@@ -36,8 +36,8 @@ fn (this Triangle) hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool {
 	t := -(normal.dot(r.origin) + d) / n_dot_ray_direction
 
 	// check if the triangle is behind the ray
-	if t < t_min { return false } // the triangle is behind us
-	if t > t_max { return false } // the triangle is out of range
+	if t < t_min { return none } // the triangle is behind us
+	if t > t_max { return none } // the triangle is out of range
 
 	// compute the intersection point using equation 1
 	intersection_point := r.at(t)//r.origin + r.dir.mul(t)
@@ -49,20 +49,21 @@ fn (this Triangle) hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool {
 	edge0 := v1.minus_vec(v0)
 	vp0 := intersection_point.minus_vec(v0)
 	mut cross := edge0.cross(vp0)
-	if normal.dot(cross) < 0 { return false } // P is on the right side
+	if normal.dot(cross) < 0 { return none } // P is on the right side
 
 	// edge 1
 	edge1 := v2.minus_vec(v1)
 	vp1 := intersection_point.minus_vec(v1)
 	cross = edge1.cross(vp1)
-	if normal.dot(cross) < 0 { return false } // P is on the right side
+	if normal.dot(cross) < 0 { return none } // P is on the right side
 
 	// edge 2
 	edge2 := v0.minus_vec(v2)
 	vp2 := intersection_point.minus_vec(v2)
 	cross = edge2.cross(vp2)
-	if normal.dot(cross) < 0 { return false } // P is on the right side
+	if normal.dot(cross) < 0 { return none } // P is on the right side
 
+	mut rec := &HitRecord{}
 	rec.t = t
 	rec.p = r.at(rec.t)
 
@@ -74,5 +75,5 @@ fn (this Triangle) hit(r Ray, t_min f64, t_max f64, mut rec &HitRecord) bool {
 	rec.set_face_normal(r, outward_normal)
 	rec.material = this.material
 
-	return true // this ray hits the triangle
+	return rec // this ray hits the triangle
 }
