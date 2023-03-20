@@ -7,7 +7,14 @@ interface Material {
 struct LambertianMaterial {
 	albedo Vec3
 }
+struct ConstantColorMaterial {
+	color Vec3
+}
 
+fn (this ConstantColorMaterial) scatter(r_in &Ray, rec &HitRecord) ScatterResult {
+	scattered := Ray{rec.p, r_in.dir.negate()}
+	return ScatterResult{rec, this.color, scattered, true}
+}
 struct ScatterResult {
 	hit_record HitRecord
     attenuation Vec3

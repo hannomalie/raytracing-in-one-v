@@ -15,18 +15,21 @@ fn main() {
 	material_left   := Metal{Vec3{0.8, 0.8, 0.8}}
 	material_right  := Metal{Vec3{0.8, 0.6, 0.2}}
 	// World
-	world := [
-		Hittable(
-			Sphere{Vec3{0,-100.5,-1}, 100, material_ground}
-		),
-		Sphere{Vec3{0,0,-1}, 0.5, material_center},
-		// Sphere{Vec3{-1,0,-1}, 0.5, material_left},
-		// Sphere{Vec3{1,0,-1}, 0.5, material_right},
-		// Hittable(
-		// 	Triangle{Vec3{-1,0,-1}, Vec3{1,0,-1}, Vec3{0,1,-1}, material_center}
-		// ),
-		Triangle{Vec3{-2,-2,1}, Vec3{-1,-2,-2}, Vec3{-1, 1,-2}, material_ground},
-	]
+	world := World{
+		sky: Sky{},
+		objects: [
+			Hittable(
+					Sphere{Vec3{0,-100.5,-1}, 100, material_ground}
+			),
+			// Sphere{Vec3{0,0,-1}, 0.5, material_center},
+			// Sphere{Vec3{-1,0,-1}, 0.5, material_left},
+			// Sphere{Vec3{1,0,-1}, 0.5, material_right},
+			// Hittable(
+			// 	Triangle{Vec3{-1,0,-1}, Vec3{1,0,-1}, Vec3{0,1,-1}, material_center}
+			// ),
+				Triangle{Vec3{-2,-2,1}, Vec3{-1,-2,-2}, Vec3{-1, 1,-2}, material_ground},
+		]
+	}
 
 	// Camera
 	cam := create_camera(Vec3{0,0,0})
@@ -45,7 +48,7 @@ fn main() {
 				u := (i + f64(0.5)) / (image_width-1)
 				v := (j + f64(0.5)) / (image_height-1)
 				r := cam.get_ray(u, v)
-				pixel_color := world.color(r, max_depth)
+				pixel_color := world.shade(r, max_depth)
 				pixel_color.to_color(1)
 			} else {
 				mut pixel_color := Vec3{0, 0, 0}
@@ -54,7 +57,7 @@ fn main() {
 					u := (i + random_double()) / (image_width-1)
 					v := (j + random_double()) / (image_height-1)
 					r := cam.get_ray(u, v)
-					pixel_color = pixel_color.plus(world.color(r, max_depth))
+					pixel_color = pixel_color.plus(world.shade(r, max_depth))
 				}
 
 				pixel_color.to_color(samples_per_pixel)
